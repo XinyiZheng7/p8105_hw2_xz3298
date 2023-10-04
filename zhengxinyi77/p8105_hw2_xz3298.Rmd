@@ -1,0 +1,143 @@
+---
+title: "p8105_hw2_xz3298"
+author: "xinyi zheng"
+date: "2023-10-04"
+output: github_document
+---
+
+##xz3298
+##Xinyi Zheng
+
+##problem 2
+```{r}
+library(readxl)
+library(dplyr)
+library(janitor)
+```
+
+# import and clean Mr. Trash Wheel's data.
+```{r}
+mrtrash_df=
+  readxl::read_excel("/Users/zhengxinyi/Xinyi77/202309 Trash Wheel Collection Data.xlsx", sheet= "Mr. Trash Wheel", range = "A2:N550", skip = 2)|>
+  janitor::clean_names()|>
+  filter(!is.na(dumpster))|>
+  mutate(homes_powered=weight_tons * 500/30,
+         trash_wheel="mr",
+         year=as.numeric(year))
+```
+
+# rename columns for clarity
+```{r}
+colnames(mrtrash_df) <- c("dumpster", "month", "year", "date", "weight", "volume", "plastic bottles", "polystyrene", "cigarette", "glass bottles", "grocery bags", "chip bags", "sports balls", "home powered")
+```
+
+# clean Professor Trash Wheel.
+```{r}
+proftrash_df=
+  readxl::read_excel("/Users/zhengxinyi/Xinyi77/202309 Trash Wheel Collection Data.xlsx", sheet= "Professor Trash Wheel", range = "A2:M97", skip = 2)|>
+  janitor::clean_names()|>
+  filter(!is.na(dumpster))|>
+  mutate(homes_powered=weight_tons * 500/30,
+         trash_wheel="professor")
+```
+
+# rename columns for clarity
+```{r}
+colnames(proftrash_df) <- c("dumpster", "month", "year", "date", "weight", "volume", "plastic bottles", "polystyrene", "cigarette", "glass bottles", "grocery bags", "chip bags", "sports balls", "home powered")
+```
+
+# clean Gwynnda Trash Wheel
+```{r}
+gwytrash_df=
+  readxl::read_excel("/Users/zhengxinyi/Xinyi77/202309 Trash Wheel Collection Data.xlsx", sheet= "Gwynnda Trash Wheel", range = "A2:K110", skip = 2)|>
+  janitor::clean_names()|>
+  filter(!is.na(dumpster))|>
+  mutate(homes_powered=weight_tons * 500/30,
+         trash_wheel="gwynnda")
+```
+
+# rename columns for clarity
+```{r}
+colnames(gwytrash_df) <- c("dumpster", "month", "year", "date", "weight", "volume", "plastic bottles", "polystyrene", "cigarette", "glass bottles", "grocery bags", "chip bags", "sports balls", "home powered")
+```
+
+# combine datasets.
+```{r}
+mrtrash_df$year <- as.character(mrtrash_df$year)
+proftrash_df$year <- as.character(proftrash_df$year)
+gwytrash_df$year <- as.character(gwytrash_df$year)
+
+all_data <- bind_rows(mrtrash_df, proftrash_df, gwytrash_df)
+```
+
+##description
+```{r}
+##The number of observations in `mrtrash_df` dataset is `r nrow(mrtrash_df)`. The key variables include `dumpster`, `weight_tons`, and `homes_powered`.
+##The number of observations in `proftrash_df` dataset is `r nrow(proftrash_df)`. The key variables include `dumpster`, `weight_tons`, and `homes_powered`.
+##The number of observations in `gwytrash_df` dataset is `r nrow(gwytrash_df)`. The key variables include `cigarette_butts`, `weight`, and `homes_powered`.
+##There are `r ncol(all_data)` variables and `r nrow(all_data)` observations in this combined dataset. The key variables include the types of the trash wheel, either `Mr`, `Professor`, or `Gwynnda`, `weight_tons`, `cigarette_butts`, and other similar items. 
+```
+
+# Total weight of trash collected by Professor Trash Wheel
+```{r}
+prof_total_weight <- sum(proftrash_df$weight, na.rm = TRUE)
+print(prof_total_weight)
+```
+# Total number of cigarette butts collected by Gwynnda in July of 2021
+```{r}
+gwynnda_cigarettes_july_2021 <- sum(gwytrash_df[gwytrash_df$month == "July" & gwytrash_df$year == "2021",]$cigarette, na.rm = TRUE)
+print(gwynnda_cigarettes_july_2021)
+```
+
+
+##problem 3
+```{r}
+library(readxl)
+library(dplyr)
+library(janitor)
+```
+# import and clean the baseline data
+```{r, warning=FALSE}
+baseline = read.csv("/Users/zhengxinyi/Xinyi77/MCI_baseline.csv", skip = 1) %>%
+  janitor::clean_names() %>%
+  mutate(sex = ifelse(sex == 1, "male", "female"),
+         apoe4 = ifelse(apoe4 == 1, "carrier", "non_carrier"),
+         age_at_onset = as.numeric(age_at_onset))
+
+baseline_mci = baseline %>%
+  drop_na(age_at_onset)
+
+baseline <- baseline %>% filter(MCI_status != "Yes")
+```
+# import and clean the biomarker data
+```{r, warning=FALSE}
+biomarker = read.csv("/Users/zhengxinyi/Xinyi77/mci_amyloid.csv", skip = 1) %>%
+  janitor::clean_names() %>%
+  rename(id = study_id,
+         time_0 = baseline) %>%
+  pivot_longer(
+    time_0:time_8, 
+    names_to = "time_in_years",
+    values_to = "amyloid_ratio"
+  )  %>%
+  mutate(amyloid_ratio = as.numeric(amyloid_ratio))
+```
+# analysis
+```{r}
+total_participants <- nrow(baseline)
+mci_participants <- sum(!is.na(baseline$Age_at_onset))
+avg_age <- mean(baseline$Current_Age, na.rm = TRUE)
+female_apoe4 <- mean(baseline$Sex == 0 & baseline$apoe4 == 1, na.rm = TRUE)
+```
+# merge data
+```{r}
+combined_data <- inner_join(baseline, biomarker, by = c("ID" = "Study.ID"))
+```
+# check the missing
+```{r}
+missing_ids <- combined_data$ID[is.na(combined_data$Current_Age) | is.na(combined_data$Amyloid_42_40_Ratio)]
+```
+# export data
+```{r}
+write.csv(combined_data, "combined_data.csv", row.names = FALSE)
+```
