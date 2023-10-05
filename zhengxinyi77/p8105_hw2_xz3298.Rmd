@@ -73,20 +73,20 @@ all_data <- bind_rows(mrtrash_df, proftrash_df, gwytrash_df)
 # Dataset Descriptions:
 
 1. mrtrash_df:
-    Number of Observations**: This dataset contains `r nrow(mrtrash_df)` observations.
-    Key Variables**: The main variables of interest in this dataset are `dumpster`, `weight_tons`, and `homes_powered`.
+    Number of Observations: This dataset contains `r nrow(mrtrash_df)` observations.
+    Key Variables: The main variables of interest in this dataset are `dumpster`, `weight_tons`, and `homes_powered`.
 
 2. proftrash_df:
-    Number of Observations**: There are `r nrow(proftrash_df)` observations in this dataset.
-    Key Variables**: This dataset primarily focuses on variables such as `dumpster`, `weight_tons`, and `homes_powered`.
+    Number of Observations: There are `r nrow(proftrash_df)` observations in this dataset.
+    Key Variables: This dataset primarily focuses on variables such as `dumpster`, `weight_tons`, and `homes_powered`.
 
 3. gwytrash_df:
-    Number of Observations**: This dataset comprises `r nrow(gwytrash_df)` observations.
-    Key Variables**: Notably, the dataset includes `cigarette_butts`, `weight`, and `homes_powered` as its main variables.
+    Number of Observations: This dataset comprises `r nrow(gwytrash_df)` observations.
+    Key Variables: Notably, the dataset includes `cigarette_butts`, `weight`, and `homes_powered` as its main variables.
 
 4. all_data:
-    Structure**: The combined dataset, `all_data`, consists of `r ncol(all_data)` variables and `r nrow(all_data)` observations.
-    Key Variables**: The dataset encompasses various attributes, with primary ones being the types of trash wheel (`Mr`, `Professor`, or `Gwynnda`), `weight_tons`, `cigarette_butts`, and other similar items.
+    Structure: The combined dataset, `all_data`, consists of `r ncol(all_data)` variables and `r nrow(all_data)` observations.
+    Key Variables: The dataset encompasses various attributes, with primary ones being the types of trash wheel (`Mr`, `Professor`, or `Gwynnda`), `weight_tons`, `cigarette_butts`, and other similar items.
 
 In essence, these descriptions give a brief overview of the data's structure and highlight the major variables in each dataset. The `r` notation is indicative of inline R code, which would be executed when rendering the document in an R Markdown environment to display the actual numeric values.
 ```
@@ -154,8 +154,6 @@ missing_ids <- combined_data$ID[is.na(combined_data$Current_Age) | is.na(combine
 ```{r}
 write.csv(combined_data, "combined_data.csv", row.names = FALSE)
 ```
-# dataset discriptions
-Certainly! Based on the code you provided, here are the descriptions:
 
 ## Descriptions:
 
@@ -164,24 +162,20 @@ Certainly! Based on the code you provided, here are the descriptions:
     Key Variables: Notable variables in this dataset include `sex`, `apoe4`, and `age_at_onset`. The `sex` variable is categorized as either "male" or "female", while the `apoe4` variable is classified as "carrier" or "non_carrier".
     Additional Note: The data has been filtered to exclude observations where the `MCI_status` is "Yes".
 
-2. baseline_mci:
-    Number of Observations: The subset of the `baseline` dataset, `baseline_mci`, has `r nrow(baseline_mci)` observations.
-    Key Variables: This dataset predominantly focuses on participants with a non-missing `age_at_onset`.
-
-3. biomarker:
+2. biomarker:
     Number of Observations: Sourced from 'mci_amyloid.csv', this dataset comprises `r nrow(biomarker)` observations.
     Key Variables: Central variables in this dataset are `time_in_years` and `amyloid_ratio`. The data has been reshaped to have a long format for the time and amyloid ratio variables.
 
-4. combined_data:
+3. combined_data:
     Number of Observations: The dataset formed by merging `baseline` and `biomarker` datasets has `r nrow(combined_data)` observations.
     Key Variables: The `combined_data` dataset contains key attributes from both the `baseline` and `biomarker` datasets, including variables such as `sex`, `apoe4`, `time_in_years`, and `amyloid_ratio`.
     Additional Note: This merged dataset has been saved as 'combined_data.csv'.
 
-5. General Analysis:
+4. General Analysis:
     The total number of participants in the `baseline` dataset is `r total_participants`.
     The number of participants with a non-missing 'Age_at_onset' value in the `baseline` dataset is `r mci_participants`.
     The average current age of participants from the `baseline` dataset is `r avg_age`.
     The proportion of participants in the `baseline` dataset who are female and are apoe4 carriers is `r female_apoe4`.
 
-6. Missing Data:
+5. Missing Data:
     The dataset contains certain IDs with missing values either for the `Current_Age` or the `Amyloid_42_40_Ratio`, and these IDs are stored in the `missing_ids` variable.
